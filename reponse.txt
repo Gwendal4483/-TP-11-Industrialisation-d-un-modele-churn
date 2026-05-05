@@ -1,0 +1,105 @@
+PARTIE 2 — ETAPE 1 — Comprendre une API
+
+
+1.  Une API (Application Programming Interface) est une interface qui permet à deux applications de communiquer entre elles via des
+    requêtes HTTP.
+
+2. GET : récupère des données sans les modifier.
+   POST : envoie des données au serveur pour traitement (ex: faire une prédiction).
+
+3.  En ML, une API permet d'exposer un modèle sans que l'utilisateur ait besoin de connaître le code. 
+    N'importe quelle application peut envoyer des données et recevoir une prédiction.
+
+
+PARTIE 2 — ETAPE 6 — Questions
+
+
+1.  Un endpoint est une URL exposée par l'API qui correspond à une action précise (ex: /predict).
+
+2.  On utilise POST car on envoie des données (les caractéristiques du client) au serveur pour obtenir une prédiction.
+
+3.  Pydantic valide automatiquement les types des données reçues. Si le client envoie une mauvaise valeur, l'API retourne une erreur claire.
+
+
+
+PARTIE 3 — ETAPE 1 — CPU VS GPU 
+
+
+Cas          | CPU ou GPU | Pourquoi
+-------------|------------|--------------------------------------------------
+Churn        | CPU        | Modèle simple (Random Forest), dataset petit, pas besoin de GPU
+Deep learning| GPU        | Nombreux calculs matriciels parallèles, le GPU est optimisé pour ça
+
+
+PARTIE 3 — ETAPE 2 — Architecture simple
+
+
+Utilisateur → API → Modèle → Réponse
+
+- Le modèle est stocké sur le serveur qui héberge l'API (fichier .pkl chargé en mémoire).
+- C'est l'utilisateur (ou une application cliente) qui appelle l'API.
+
+
+PARTIE 3 — ETAPE 3 — Ajouter base de données
+
+
+Utilisateur → API → DB → Modèle
+
+- Pourquoi stocker les données : garder un historique des prédictions, analyser les dérives du modèle, reentraîner plus tard.
+- Que stocker : les données d'entrée (tenure, Contract...), la prédiction retournée, et l'horodatage.
+
+
+PARTIE 3 — ETAPE 4 — Scalabilité
+
+
+- Pourquoi scaler : si trop d'utilisateurs appellent l'API en même temps, une seule instance ne suffit plus et les temps de réponse augmentent.
+
+- Un load balancer reçoit toutes les requêtes et les distribue entre les différentes instances de l'API pour équilibrer la charge.
+
+
+PARTIE 3 — ETAPE 5 — Cas TELCO réel
+
+
+1. Batch : on prédit le churn une fois par jour/semaine sur tous les clients, pas besoin de temps réel.
+2. Contacter les clients à risque avec des offres de rétention (remise, changement de contrat).
+3. Stocker les résultats en base de données, liés au profil client.
+
+
+PARTIE 4 — ETAPE 5 — Analyse
+
+
+1. Les clients avec un contrat "Month-to-month" churne le plus, car ils ne sont pas engagés sur la durée.
+
+2. Les clients à risque sont ceux avec un contrat mensuel, des MonthlyCharges élevées et un tenure faible (clients récents).
+
+3. Recommandation : proposer des incitations pour passer en contrat annuel ou bi-annuel aux clients avec un contrat mensuel et un tenure inférieur à 12 mois.
+
+
+PARTIE 5 — ETAPE 3 — Présentation
+
+
+Problème métier :
+Un opérateur télécom perd des clients chaque mois. Identifier en avance les clients susceptibles de partir permet d'agir avant la résiliation.
+
+Solution :
+Modèle Random Forest entraîné sur les données historiques clients, exposé via une API FastAPI et visualisé dans un dashboard Streamlit.
+
+Résultat :
+Accuracy de 0.80 sur le jeu de test.
+
+
+
+
+PARTIE 5 — ETAPE 4 — Veille IA
+
+
+Sites :
+- paperswithcode.com : implémentations de papers ML avec code
+- huggingface.co/blog : actualités modèles et NLP
+
+Chaînes YouTube :
+- Andrej Karpathy : deep learning et LLMs
+- Sentdex : machine learning appliqué en Python
+
+GitHub :
+- github.com/mrdbourke/zero-to-mastery-ml : cours ML complet avec notebooks
