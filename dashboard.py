@@ -18,6 +18,13 @@ col3.metric("Clients à risque", int(len(df) * churn_rate))
 
 st.divider()
 
+# Aperçu des données brutes
+st.subheader("Aperçu des données")
+st.dataframe(df.head(10))
+st.write(f"Dimensions du dataset : {df.shape[0]} lignes x {df.shape[1]} colonnes")
+
+st.divider()
+
 # Graphique : taux de churn moyen par type de contrat
 # Permet d'identifier quel segment est le plus à risque
 st.subheader("Churn par type de contrat")
@@ -48,8 +55,20 @@ st.pyplot(fig)
 
 st.divider()
 
+# Graphique : taux de churn selon l'utilisation du support technique
+# Permet de voir si les clients qui contactent le support sont plus à risque
+st.subheader("Churn selon le support technique")
+churn_by_support = df.groupby("TechSupport")["Churn"].apply(lambda x: (x == "Yes").mean())
+st.bar_chart(churn_by_support)
+
+
 # Recommandations métier affichées directement dans le dashboard
-st.subheader("Recommandations")
-st.write("- Cibler les clients en contrat mensuel avec moins de 12 mois d'ancienneté")
-st.write("- Proposer une remise pour passer en contrat annuel")
-st.write("- Priorité aux clients avec MonthlyCharges > 65€")
+st.subheader("Analyse")
+st.write("**Quels clients churne le plus ?**")
+st.write("Les clients en contrat mensuel, avec moins de 12 mois d'ancienneté, des charges supérieures à la moyenne et sans support technique.")
+
+st.write("**Pourquoi ?**")
+st.write("Un contrat mensuel n'engage pas le client sur la durée. Combiné à une facture élevée et à un manque d'accompagnement technique, le client ne perçoit pas suffisamment la valeur du service pour rester.")
+
+st.write("**Quelle action business proposer ?**")
+st.write("Contacter ces clients dans les 3 premiers mois avec une offre de passage en contrat annuel incluant le support technique. C'est la période où le risque est le plus élevé et où une action commerciale a le plus d'impact.")
