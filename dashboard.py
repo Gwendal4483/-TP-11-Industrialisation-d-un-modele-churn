@@ -10,6 +10,12 @@ churn_rate = (df["Churn"] == "Yes").mean()
 
 st.title("Dashboard Churn - Telco")
 
+st.markdown("""
+Vous êtes directeur marketing chez Telco. Chaque mois, des clients résilient leur contrat sans que vous puissiez anticiper ces départs.
+Ce dashboard vous permet d'identifier les profils à risque dans votre base clients, de comprendre pourquoi ils partent,
+et de cibler vos actions de rétention là où elles auront le plus d'impact.
+""")
+
 # Affichage des trois KPIs principaux en colonnes côte à côte
 col1, col2, col3 = st.columns(3)
 col1.metric("Churn rate global", f"{churn_rate:.2%}")
@@ -33,11 +39,23 @@ st.bar_chart(churn_by_contract)
 
 st.divider()
 
+st.subheader("Comparaison des profils clients")
+
+
 # Affichage du profil moyen d'un client qui churne
 st.subheader("Profil des clients à risque")
 at_risk = df[df["Churn"] == "Yes"][["tenure", "MonthlyCharges", "Contract", "InternetService"]]
 st.write(f"Tenure moyen : {at_risk['tenure'].mean():.0f} mois")
 st.write(f"Charge mensuelle moyenne : {at_risk['MonthlyCharges'].mean():.2f} €")
+
+#affichage du profil moyen d'un client qui ne churne pas
+st.subheader("Profil des clients stables")
+stable = df[df["Churn"] == "No"][["tenure", "MonthlyCharges", "Contract", "InternetService"]]
+st.write(f"Tenure moyen : {stable['tenure'].mean():.0f} mois")
+st.write(f"Charge mensuelle moyenne : {stable['MonthlyCharges'].mean():.2f} €")
+
+
+st.subheader("Visualisation des profils clients")
 
 # Graphique de dispersion : MonthlyCharges vs Tenure coloré par statut de churn
 # Les points rouges (churners) se concentrent en haut à gauche :
@@ -45,8 +63,8 @@ st.write(f"Charge mensuelle moyenne : {at_risk['MonthlyCharges'].mean():.2f} €
 fig, ax = plt.subplots()
 colors = df["Churn"].map({"Yes": "red", "No": "blue"})
 ax.scatter(df["tenure"], df["MonthlyCharges"], c=colors, alpha=0.3, s=10)
-ax.set_xlabel("Tenure (mois)")
-ax.set_ylabel("Monthly Charges (€)")
+ax.set_xlabel("Ancienneté (mois)")
+ax.set_ylabel("Montant Mensuel (€)")
 ax.legend(handles=[
     plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='red', label='Churn'),
     plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', label='No Churn')
@@ -63,12 +81,12 @@ st.bar_chart(churn_by_support)
 
 
 # Recommandations métier affichées directement dans le dashboard
-st.subheader("Analyse")
+st.subheader("Analyse et conseils")
 st.write("**Quels clients churne le plus ?**")
 st.write("Les clients en contrat mensuel, avec moins de 12 mois d'ancienneté, des charges supérieures à la moyenne et sans support technique.")
 
 st.write("**Pourquoi ?**")
 st.write("Un contrat mensuel n'engage pas le client sur la durée. Combiné à une facture élevée et à un manque d'accompagnement technique, le client ne perçoit pas suffisamment la valeur du service pour rester.")
 
-st.write("**Quelle action business proposer ?**")
+st.write("**Quelles actions business mettre en place ?**")
 st.write("Contacter ces clients dans les 3 premiers mois avec une offre de passage en contrat annuel incluant le support technique. C'est la période où le risque est le plus élevé et où une action commerciale a le plus d'impact.")
